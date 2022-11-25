@@ -4,26 +4,20 @@
 
 // using namespace std;
 
-unsigned int solve(unsigned int N, unsigned int x)
-{
+unsigned int solve(unsigned int N, unsigned int x) {
     unsigned int res = 0;
-    while (x != 1 << (N - 1))
-    {
-        if (x < 1 << (N - 1))
-        {
+    while (x != 1 << (N - 1)) {
+        if (x < 1 << (N - 1)) {
             res++;
             x = x * 2;
-        }
-        else
-        {
+        } else {
             x = (1 << N) - x;
         }
     }
     return res;
 }
 
-int main(void)
-{
+int main(void) {
     // Parse N, x, y from stdin
     unsigned int N, x;
     std::cin >> N >> x;
