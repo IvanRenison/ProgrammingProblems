@@ -3,6 +3,8 @@
 def solve():
     pass
 
+def parse():
+    pass
 
 def main():
     pass
