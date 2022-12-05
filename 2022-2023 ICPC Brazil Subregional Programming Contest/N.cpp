@@ -6,6 +6,8 @@
 
 using namespace std;
 
+typedef unsigned int uint;
+
 // Parse N, As, Bs, K, L
 static inline void
 parse(uint& N, vector<uint>& As, vector<uint>& Bs, uint& K, uint& L) {
