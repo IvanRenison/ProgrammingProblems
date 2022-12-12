@@ -1,18 +1,22 @@
 //
 
-#include <iostream>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-void parse(void) {
+typedef unsigned int uint;
+
+static inline void parse(void) {
 
 }
 
-void solve(void) {
+static inline void solve(void) {
 
 }
 
 int main(void) {
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
 
   return EXIT_SUCCESS;
 }
