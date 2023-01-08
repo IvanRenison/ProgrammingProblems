@@ -1,9 +1,9 @@
 #
 
-def solve1():
+def parse1():
     pass
 
-def parse1():
+def solve1():
     pass
 
 def main():
