@@ -1,6 +1,11 @@
 
-from typing import Callable, List, TypeVar
+from typing import Callable, List, Optional, TypeVar
 
+def my_input() -> Optional[str]:
+    try:
+        return input()
+    except:
+        return None
 
 T = TypeVar('T')
 def binary_search(f: Callable[[T], bool], it: List[T]) -> int:
@@ -13,4 +18,3 @@ def binary_search(f: Callable[[T], bool], it: List[T]) -> int:
         else:
             upper = m
     return lower
-    
