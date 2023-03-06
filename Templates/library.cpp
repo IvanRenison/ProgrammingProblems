@@ -5,6 +5,7 @@ using namespace std;
 
 typedef unsigned int uint;
 
+/* For each number until N get the smallest prime that divides it */
 static inline uint* get_smallest_prime_factors(uint N) {
   uint* smallest_prime_factors = (uint*)(calloc(N, sizeof(uint)));
 
@@ -14,7 +15,6 @@ static inline uint* get_smallest_prime_factors(uint N) {
 
   for (uint i = 2; i * i < N; i++) {
     if (smallest_prime_factors[i] == i) {
-      smallest_prime_factors[i] = i;
       for (uint j = i * i; j < N; j += i) {
         if (smallest_prime_factors[j] == j) {
           smallest_prime_factors[j] = i;
