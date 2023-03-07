@@ -41,3 +41,41 @@ static inline vector<uint> prime_factors(uint* smallest_prime_factors, uint n) {
     return factors;
   }
 }
+
+#define mod 5 // Has to be prime for inverse_mod and div_mod
+
+static inline ulong factorial_mod(ulong x) {
+  ulong result = 1;
+  for (ulong i = 2; i <= x; ++i) {
+    result = (result * i) % mod;
+  }
+  return result;
+}
+
+static inline ulong pow_mod(ulong x, ulong y) {
+  ulong res = 1;
+  while (y > 0) {
+    if (y % 2 == 1) {
+      res = (res * x) % mod;
+    }
+    y = y / 2;
+    x = (x * x) % mod;
+  }
+  return res;
+}
+
+static inline ulong inverse_mod(ulong x) {
+  return pow_mod(x, mod - 2);
+}
+
+static inline ulong div_mod(ulong x, ulong y) {
+  return ((x % mod) * (inverse_mod(y % mod))) % mod;
+}
+
+static inline ulong prod_mod(vector<ulong> xs) {
+  ulong result = 1;
+  for (ulong x : xs) {
+    result = (result * x) % mod;
+  }
+  return result;
+}
