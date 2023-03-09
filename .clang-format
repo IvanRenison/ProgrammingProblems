@@ -1,5 +1,4 @@
-
-IndentWidth: 4
+IndentWidth: 2
 PointerAlignment: Left
 ReflowComments: false
 AllowShortBlocksOnASingleLine: Empty

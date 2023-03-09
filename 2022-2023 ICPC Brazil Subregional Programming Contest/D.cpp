@@ -5,26 +5,26 @@
 // using namespace std;
 
 unsigned int solve(unsigned int N, unsigned int x) {
-    unsigned int res = 0;
-    while (x != 1 << (N - 1)) {
-        if (x < 1 << (N - 1)) {
-            res++;
-            x = x * 2;
-        } else {
-            x = (1 << N) - x;
-        }
+  unsigned int res = 0;
+  while (x != 1 << (N - 1)) {
+    if (x < 1 << (N - 1)) {
+      res++;
+      x = x * 2;
+    } else {
+      x = (1 << N) - x;
     }
-    return res;
+  }
+  return res;
 }
 
 int main(void) {
-    // Parse N, x, y from stdin
-    unsigned int N, x;
-    std::cin >> N >> x;
+  // Parse N, x, y from stdin
+  unsigned int N, x;
+  std::cin >> N >> x;
 
-    unsigned int res = solve(N, x);
+  unsigned int res = solve(N, x);
 
-    std::cout << res;
+  std::cout << res;
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }

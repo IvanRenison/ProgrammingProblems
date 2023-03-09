@@ -1,13 +1,13 @@
 #
 
-def solve():
-    pass
-
 def parse():
     pass
 
-def main():
+def solve():
     pass
+
+def main():
+    print(solve(*parse()))
 
 
 if __name__ == '__main__':
