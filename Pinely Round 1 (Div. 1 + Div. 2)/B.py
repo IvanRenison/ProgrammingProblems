@@ -1,57 +1,60 @@
 # https://codeforces.com/contest/1761/problem/B
 
-from typing import Callable, Final, List, TypeVar
+from collections import defaultdict
+from typing import DefaultDict, Dict, List
 
+def delete_from_dict(d: Dict[int, int], k: int):
+    d[k] -= 1
+    if d[k] == 0:
+        d.pop(k)
 
-T = TypeVar('T')
+def solve1(As: List[int]) -> int:
 
-
-def list_func_index(lst: list[T], func: Callable[[T], bool]) -> int | None:
-    for i in range(len(lst)):
-        if func(lst[i]):
-            return i
-    return None
-
-
-def solve1(a: List[int]) -> int:
-    n: int = len(a)
+    n: int = len(As)
     res: int = 0
+    numbers_amounts: DefaultDict[int, int] = defaultdict(int)
+    for a in As:
+        numbers_amounts[a] += 1
+
     while n > 1:
+
+        index_to_delete: int | None = None
         for i in range(n):
-            if a[(i-1) % n] == a[(i+1) % n]:
-                i = (i+1) % n
-            else:
+            value = As[i]
+            if As[i-1] != As[(i+1) % n] and (numbers_amounts[value] > 1 or len(numbers_amounts) > 3):
+                index_to_delete = i
+                As.pop(index_to_delete)
+                n -= 1
+                res += 1
+                delete_from_dict(numbers_amounts, value)
                 break
-        else:
-            min_lost: int = n+1
-            min_lost_i: int | None = None
+
+        if index_to_delete is None:
             for i in range(n):
-                amount_lost: int = list_func_index(
-                    list(reversed(a[i:])) + list(reversed([]
-                                                          if i == 0 else a[:(i-1) % n])),
-                    (lambda x: x == a[i])
-                ) + list_func_index(
-                    (a[:(i-1) % n] + ([] if i == 0 else a[i:])),
-                    (lambda x: x == a[i])
-                )
-                if amount_lost < min_lost:
-                    min_lost = amount_lost
-                    min_lost_i = i
-            i = min_lost_i
-        a.pop(i)
-        n -= 1
-        i = i % n
-        while n > 1 and a[(i-1) % n] == a[i]:
-            a.pop(i)
+                if As[i-1] != As[(i+1) % n]:
+                    index_to_delete = i
+                    value: int = As.pop(index_to_delete)
+                    n -= 1
+                    res += 1
+                    delete_from_dict(numbers_amounts, value)
+                    break
+
+        if index_to_delete is None:
+            # index_to_delete = 0
+            value: int = As.pop(0)
             n -= 1
-            i = (i-1) % n
-        while n > 1 and a[(i-2) % n] == a[(i-1) % n]:
-            a.pop((i-1) % n)
-            n -= 1
-            i = (i-1) % n
-        res += 1
+            res += 1
+            delete_from_dict(numbers_amounts, value)
+
+            if n > 1 and As[0] == As[-1]:
+                value = As.pop()
+                n -= 1
+                delete_from_dict(numbers_amounts, value)
 
     return res + 1
+
+
+
 
 
 def parse1() -> List[int]:
