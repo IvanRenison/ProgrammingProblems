@@ -55,12 +55,12 @@ static inline bool solve_only_borders(ull start, ull end, ull iteration) {
 
       if (P1_0 < P_0 && P_0 < P1_1) {
         points[points_array_next][updated_start][0] = P_0;
-        points[points_array_next][updated_start][1] = P1_1;
+        points[points_array_next][updated_start][1] = P_1;
         updated_start++;
       }
       else {
         points[points_array_next][updated_end-1][0] = P_0;
-        points[points_array_next][updated_end-1][1] = P1_1;
+        points[points_array_next][updated_end-1][1] = P_1;
         updated_end--;
       }
     }
