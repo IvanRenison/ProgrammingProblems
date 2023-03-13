@@ -22,7 +22,7 @@ def solve(wday: WDay, Ds: List[int]) -> int:
                 D_wday = 0
                 D -= 2
             elif D_wday == 6:
-                D_wday == 0
+                D_wday = 0
                 D -= 1
 
         D = D % 91
@@ -34,7 +34,7 @@ def solve(wday: WDay, Ds: List[int]) -> int:
                 D_wday = 0
                 D -= 2
             elif D_wday == 6:
-                D_wday == 0
+                D_wday = 0
                 D -= 1
 
         ans = 30 - D
