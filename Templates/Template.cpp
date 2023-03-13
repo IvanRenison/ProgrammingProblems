@@ -4,11 +4,9 @@
 
 using namespace std;
 
-typedef unsigned int uint;
+typedef unsigned long long ull;
+#define fore(i, a, b) for (ull i = a; i < b; i++)
 
-static inline void parse(void) {
-
-}
 
 static inline void solve(void) {
 
