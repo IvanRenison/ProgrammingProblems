@@ -6,11 +6,11 @@ using namespace std;
 
 typedef unsigned int uint;
 
-static inline void parse(void) {
+void parse(void) {
 
 }
 
-static inline void solve(void) {
+void solve(void) {
 
 }
 

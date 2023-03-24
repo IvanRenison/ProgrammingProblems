@@ -8,7 +8,7 @@ typedef unsigned long long ull;
 #define fore(i, a, b) for (ull i = a; i < b; i++)
 
 
-static inline void solve(void) {
+void solve(void) {
 
 }
 
