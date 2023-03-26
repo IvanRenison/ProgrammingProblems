@@ -36,13 +36,13 @@ ll solve1(vector<pair<ll, ll>> abs) {
   fore(i, 1, n) {
     ll a = abs[i].first;
     ll b = abs[i].second;
-    ll t = a*b;
+    ll t = a * b;
 
     diva = __gcd(diva, a);
     divt = __gcd(divt, t);
     mulb = mulb * b / __gcd(mulb, abs[i].second);
 
-    if (divt % mulb != 0 || diva % (divt/mulb) != 0) {
+    if (divt % mulb != 0 || diva % (divt / mulb) != 0) {
       ans++;
       diva = a;
       divt = t;

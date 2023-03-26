@@ -36,8 +36,7 @@ optional<vector<ll>> solve1(vector<ll> as) {
       ans[i] = as[front];
       sum += as[front];
       front++;
-    }
-    else {
+    } else {
       ans[i] = as[back];
       sum += as[back];
       back--;
@@ -62,7 +61,7 @@ int main(void) {
       continue;
     }
     cout << "Yes" << endl;
-    for(ll a : *ans) {
+    for (ll a : *ans) {
       cout << a << " ";
     }
     cout << endl;
