@@ -4,13 +4,14 @@
 
 using namespace std;
 
-typedef unsigned int uint;
+typedef unsigned long long ull;
+#define fore(i, a, b) for (ull i = a; i < b; i++)
 
-void parse(void) {
+void parse1(void) {
 
 }
 
-void solve(void) {
+void solve1(void) {
 
 }
 
@@ -18,12 +19,12 @@ int main(void) {
   ios_base::sync_with_stdio(false);
   cin.tie(NULL);
 
-  int t;
+  ull t;
 
   cin >> t;
 
-  for (uint i = 0; i < t; i++) {
-    solve(parse()) >> cout;
+  fore(i, 0, t) {
+    cout << solve1(parse1());
   }
 
   return EXIT_SUCCESS;
