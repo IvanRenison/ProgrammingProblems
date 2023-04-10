@@ -25,7 +25,6 @@ pair<vector<ull>, vector<pair<ull, ull>>> parse1(void) {
 
 bool solve1(vector<ull> weights, vector<pair<ull, ull>> edges) {
   ull n = weights.size();
-  ull m = edges.size();
 
   vector<vector<ull>> neighbors(n);
 
@@ -34,52 +33,47 @@ bool solve1(vector<ull> weights, vector<pair<ull, ull>> edges) {
     neighbors[w].push_back(v);
   }
 
-  vector<bool> ceros_visited(n, false);
-
+  vector<bool> visited(n, false);
 
   fore(i, 0, n) {
-    if (weights[i] == 0 && !ceros_visited[i]) {
-      queue<ull> queue;
-      vector<bool> visited(n, false);
-      visited[i] = true;
-      ull visited_amount = 1;
-      ull killed_amount = 0;
-      queue.push(i);
+    if (visited[i] || weights[i] != 0) {
+      continue;
+    }
 
-      bool flag = true;
-      while (queue.size() > 0 && flag) {
-        ull first_try = queue.front();
-        ull v = first_try;
-        queue.pop();
-        while (weights[v] > killed_amount) {
-          queue.push(v);
-          v = queue.front();
-          queue.pop();
-          if (v == first_try) {
-            flag = false;
-            break;
-          }
-        }
-        if (flag) {
-          killed_amount++;
-          for (ull w : neighbors[v]) {
-            if (!visited[w]) {
-              queue.push(w);
-              visited_amount++;
-              visited[w] = true;
-              if (weights[w] == 0) {
-                ceros_visited[w] = true;
-              }
-            }
-          }
-        }
+    vector<bool> visited_vertexes(n, false);
+    visited_vertexes[i] = true;
+    ull vertexes_count = 1;
+    set<pair<ull, ull>> vertexes_to_visit;
+    for (auto v : neighbors[i]) {
+      vertexes_to_visit.insert({weights[v], v});
+    }
+
+    while (!vertexes_to_visit.empty()) {
+
+      // Get min weight vertex
+      auto [weight, v] = *vertexes_to_visit.begin();
+      vertexes_to_visit.erase(vertexes_to_visit.begin());
+
+      if (weight > vertexes_count) {
+        break;
       }
 
-      if (visited_amount == n) {
-        return true;
+      visited[v] = true;
+      visited_vertexes[v] = true;
+      vertexes_count++;
+
+      for (auto w : neighbors[v]) {
+        if (!visited_vertexes[w]) {
+          vertexes_to_visit.insert({weights[w], w});
+        }
       }
     }
+
+    if (vertexes_count == n) {
+      return true;
+    }
   }
+
 
   return false;
 }
@@ -95,9 +89,9 @@ int main(void) {
   fore(i, 0, t) {
     auto [a, b] = parse1();
     if (solve1(a, b)) {
-      cout << "YES" << endl;
+      cout << "YES\n";
     } else {
-      cout << "NO" << endl;
+      cout << "NO\n";
     }
   }
 
