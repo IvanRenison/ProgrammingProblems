@@ -25,9 +25,9 @@ int main(void) {
 
   fore(i, 0, t) {
     if (solve1(parse1())) {
-      cout << "Yes";
+      cout << "Yes\n";
     } else {
-      cout << "No";
+      cout << "No\n";
     }
   }
 
