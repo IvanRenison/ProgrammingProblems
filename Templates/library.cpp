@@ -79,3 +79,32 @@ static inline ulong prod_mod(vector<ulong> xs) {
   }
   return result;
 }
+
+class segmentsWeights {
+  map<ull, ull> weights;
+
+  void add(ull l, ull r, ull w) {
+    if (l > r) {
+      return;
+    }
+
+    auto l_pos = weights.lower_bound(l);
+    auto r_pos = weights.lower_bound(r);
+
+    if ((*l_pos).first != l) {
+      l_pos--;
+      weights.insert({l, (*l_pos).second});
+      l_pos++;
+    }
+
+    if ((*r_pos).first != r) {
+      r_pos--;
+      weights.insert({r, (*r_pos).second});
+      r_pos++;
+    }
+
+    for (auto it = l_pos; it != r_pos; it++) {
+      (*it).second += w;
+    }
+  }
+};
