@@ -108,3 +108,18 @@ class segmentsWeights {
     }
   }
 };
+
+template <typename T> T binary_search(bool f(T), vector<T> it) {
+  ull lower = 0;
+  ull upper = it.size();
+  while (lower + 1 < upper) {
+    ull m = (lower + upper) / 2;
+    if (f(ir[m])) {
+      lower = m;
+    } else {
+      upper = m;
+    }
+  }
+
+  return lower;
+}
