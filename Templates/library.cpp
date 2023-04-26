@@ -4,6 +4,7 @@
 using namespace std;
 
 typedef unsigned int uint;
+typedef unsigned long long ull;
 
 /* For each number until N get the smallest prime that divides it */
 static inline uint* get_smallest_prime_factors(uint N) {
@@ -122,6 +123,25 @@ template <typename T> ull binary_search(function<bool(T)> f, vector<T> it) {
   while (lower + 1 < upper) {
     ull m = (lower + upper) / 2;
     if (f(it[m])) {
+      upper = m;
+    } else {
+      lower = m;
+    }
+  }
+
+  return upper;
+}
+/* Find the minimum index for witch f is true or or upper if none if true */
+ull binary_search(function<bool(ull)> f, ull lower, ull upper) {
+  if (f(lower)) {
+    return lower;
+  }
+  if (!f(upper - 1)) {
+    return upper;
+  }
+  while (lower + 1 < upper) {
+    ull m = (lower + upper) / 2;
+    if (f(m)) {
       upper = m;
     } else {
       lower = m;
