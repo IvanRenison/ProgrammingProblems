@@ -12,6 +12,8 @@ typedef ull Vertex;
 typedef ull Edge;
 typedef ull Capacity;
 typedef ll Value;
+typedef vector<Value> Flow;
+typedef vector<Edge> Path;
 
 class UndirectedNetwork {
 public:
@@ -50,41 +52,42 @@ public:
     }
   }
 
-  ll flowValue(vector<Value> flow) {
+  ll flowValue(Flow flow) {
     ll ans = 0;
 
     for (auto [_, e] : adj[s]) {
-      ans += flow[e];
+      if (s == edges[e].first) {
+        ans += flow[e];
+      }
+      else {
+        ans -= flow[e];
+      }
     }
 
     return ans;
   }
 
-  bool isFlowEdgeTo(vector<Value> flow, Edge e, Vertex v) {
-    if (v == edges[e].second) {
-      // Side u v
-      if (flow[e] >= 0 && flow[e] < cs[e]) {
-        // Forward
-        return true;
-      } else if (flow[e] < 0 && -flow[e] < cs[e]) {
-        // Backward
-        return true;
-      }
-    } else {
-      // Side v u
-      if (flow[e] > 0 && flow[e] < cs[e]) {
-        // Backward
-        return true;
-      } else if (flow[e] <= 0 && -flow[e] < cs[e]) {
-        // Forward
-        return true;
+  bool isFlowValid(Flow flow) {
+    fore(i, 0, m) {
+      if (abs(flow[i]) > (ll)cs[i]) {
+        return false;
       }
     }
 
-    return false;
+    return true;
   }
 
-  optional<vector<Edge>> find_f_path(vector<Value> flow) {
+  ull f_capacity_to(Flow flow, Edge e, Vertex v) {
+    if (v == edges[e].second) {
+      // Side u v
+      return (ull)((ll)cs[e] - flow[e]);
+    } else {
+      // Side v u
+      return flow[e] + (ll)cs[e];
+    }
+  }
+
+  optional<Path> find_f_path(Flow flow) {
 
     vector<bool> visited(n, false);
     vector<optional<Edge>> parent(n);
@@ -96,25 +99,30 @@ public:
       Vertex u = queue[queue_position];
 
       for (auto [v, e] : adj[u]) {
-        if (v == t) {
-          vector<Edge> path;
 
-          while (v != s) {
-            Edge e = parent[v].value();
-            path.push_back(e);
-            v = edges[e].first;
-          }
 
-          reverse(path.begin(), path.end());
+        if (!visited[v] && f_capacity_to(flow, e, v) > 0) {
+          visited[v] = true;
+          parent[v] = e;
+          queue.push_back(v);
 
-          return path;
-        }
+          if (v == t) {
+            Path path;
 
-        if (u != v && !visited[v]) {
-          if (isFlowEdgeTo(flow, e, v)) {
-            visited[v] = true;
-            parent[v] = e;
-            queue.push_back(v);
+            while (v != s) {
+              assert(visited[v]);
+              assert(parent[v].has_value());
+              Edge e = parent[v].value();
+              path.push_back(e);
+              if (v == edges[e].first) {
+                v = edges[e].second;
+              } else {
+                v = edges[e].first;
+              }
+            }
+            reverse(path.begin(), path.end());
+
+            return path;
           }
         }
       }
@@ -124,18 +132,61 @@ public:
 
     return nullopt;
   }
+
+  ull path_capacity(Flow flow, Path path) {
+    ull ans = ULLONG_MAX;
+
+    Vertex last = s;
+    for (Edge e : path) {
+      Vertex next = edges[e].first == last ? edges[e].second : edges[e].first;
+      ans = min(ans, f_capacity_to(flow, e, next));
+      last = next;
+    }
+
+    return ans;
+  }
 };
 
-vector<Value> EdmondsKarp(UndirectedNetwork N) {
-  vector<Value> flow(N.m, 0);
+Flow EdmondsKarp(UndirectedNetwork N) {
+  Flow flow(N.m, 0);
 
-  // TODO
+  while (true) {
+    optional<Path> path = N.find_f_path(flow);
+
+    if (!path.has_value()) {
+      return flow;
+    }
+
+    ull path_cap = N.path_capacity(flow, path.value());
+
+    assert(path_cap > 0);
+
+    Vertex last = N.s;
+    for (Edge e : path.value()) {
+      Vertex u = N.edges[e].first;
+      Vertex v = N.edges[e].second;
+
+      if (u == last) {
+        // Side u v
+        flow[e] += path_cap;
+        last = v;
+      } else {
+        // Side v u
+        flow[e] -= path_cap;
+        last = u;
+      }
+    }
+
+    if (!N.isFlowValid(flow)) {
+      assert(false);
+    }
+  }
 }
 
 ull solve(ull n, vector<pair<ull, ull>> edges, vector<ull> cs) {
   UndirectedNetwork N(n, 0, n - 1, edges, cs);
 
-  vector<Value> maxFlow = EdmondsKarp(N);
+  Flow maxFlow = EdmondsKarp(N);
 
   return (ull)N.flowValue(maxFlow);
 }
