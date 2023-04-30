@@ -52,7 +52,7 @@ public:
     }
   }
 
-  ll flowValue(Flow flow) {
+  ll flowValue(const Flow flow) const {
     ll ans = 0;
 
     for (auto [_, e] : adj[s]) {
@@ -67,7 +67,7 @@ public:
     return ans;
   }
 
-  bool isFlowValid(Flow flow) {
+  bool isFlowValid(Flow flow) const {
     fore(i, 0, m) {
       if (abs(flow[i]) > (ll)cs[i]) {
         return false;
@@ -77,7 +77,7 @@ public:
     return true;
   }
 
-  ull f_capacity_to(Flow flow, Edge e, Vertex v) {
+  ull f_capacity_to(const Flow flow, Edge e, Vertex v) const {
     if (v == edges[e].second) {
       // Side u v
       return (ull)((ll)cs[e] - flow[e]);
@@ -87,7 +87,7 @@ public:
     }
   }
 
-  optional<Path> find_f_path(Flow flow) {
+  optional<Path> find_f_path(const Flow flow) const {
 
     vector<bool> visited(n, false);
     vector<optional<Edge>> parent(n);
@@ -133,7 +133,7 @@ public:
     return nullopt;
   }
 
-  ull path_capacity(Flow flow, Path path) {
+  ull path_capacity(const Flow flow, const Path path) const {
     ull ans = ULLONG_MAX;
 
     Vertex last = s;
@@ -147,7 +147,7 @@ public:
   }
 };
 
-Flow EdmondsKarp(UndirectedNetwork N) {
+Flow EdmondsKarp(const UndirectedNetwork N) {
   Flow flow(N.m, 0);
 
   while (true) {
