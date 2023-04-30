@@ -1,91 +1,102 @@
 // https://codeforces.com/gym/103960/problem/N
 
-#include <iostream>
-#include <set>
-#include <vector>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-typedef unsigned int uint;
+typedef unsigned long long ull;
+#define fore(i, a, b) for (ull i = a; i < b; i++)
 
-// Parse N, As, Bs, K, L
-static inline void
-parse(uint& N, vector<uint>& As, vector<uint>& Bs, uint& K, uint& L) {
-    cin >> N;
-    As.resize(N);
-    Bs.resize(N);
-    for (uint i = 0; i < N; i++) {
-        cin >> As[i];
-    }
-    for (uint i = 0; i < N; i++) {
-        cin >> Bs[i];
-    }
+ull solve(vector<ull> as, vector<ull> bs, ull K, ull L) {
+  ull N = as.size();
 
-    cin >> K >> L;
-}
+  ull as_sum = 0;
 
-static inline uint solve(
-    uint const N, vector<uint> const As, vector<uint> const Bs, uint const K,
-    uint const L
-) {
-    uint highest_score_possible = 0;
+  multiset<ull> bs_values_used;
+  multiset<ull> bs_values_unused;
 
-    for (uint i = 0; i <= K; i++) {
-        uint score = 0;
-        for (uint j = 0; j < i; j++) {
-            score += As[j];
-        }
-        for (uint j = N - (K - i); j < N; j++) {
-            score += As[j];
-        }
+  fore(i, 0, K) {
+    ull a = as[i];
+    as_sum += a;
+    bs_values_used.insert(bs[i]);
+  }
 
-        // Get the L highest cards from Bs[...i] + Bs[N-(K-i)...]
+  // Keep only L in bs_values_used
+  while (bs_values_used.size() > L) {
+    multiset<ull>::iterator it = bs_values_used.begin();
+    bs_values_unused.insert(*it);
+    bs_values_used.erase(it);
+  }
 
-        // set of size L, sorted in ascending order
+  ull bs_used_sum = 0;
 
-        multiset<uint> highest_cards;
+  for (ull b : bs_values_used) {
+    bs_used_sum += b;
+  }
 
-        for (uint j = 0; j < i; j++) {
-            if (highest_cards.size() < L) {
-                highest_cards.insert(Bs[j]);
-            } else {
-                if (Bs[j] > *highest_cards.begin()) {
-                    highest_cards.erase(highest_cards.begin());
-                    highest_cards.insert(Bs[j]);
-                }
-            }
-        }
-        for (uint j = N - (K - i); j < N; j++) {
-            if (highest_cards.size() < L) {
-                highest_cards.insert(Bs[j]);
-            } else {
-                if (Bs[j] > *highest_cards.begin()) {
-                    highest_cards.erase(highest_cards.begin());
-                    highest_cards.insert(Bs[j]);
-                }
-            }
-        }
+  ull max_sum = as_sum + bs_used_sum;
 
-        for (multiset<uint>::iterator card = highest_cards.begin();
-             card != highest_cards.end(); card++) {
-            score += *card;
-        }
+  fore(i, 1, K + 1) {
+    ull a_old = as[K - i];
+    ull b_old = bs[K - i];
+    ull a_new = as[N - i];
+    ull b_new = bs[N - i];
 
-        if (score > highest_score_possible) {
-            highest_score_possible = score;
-        }
+    as_sum -= a_old;
+    as_sum += a_new;
+
+    multiset<ull>::iterator b_old_it = bs_values_used.find(b_old);
+
+    if (b_old_it != bs_values_used.end()) {
+      bs_values_unused.insert(b_new);
+      bs_values_used.erase(b_old_it);
+      bs_used_sum -= b_old;
+
+      multiset<ull>::iterator bs_used_new = bs_values_unused.end();
+      bs_used_new--;
+
+      bs_values_used.insert(*bs_used_new);
+      bs_used_sum += *bs_used_new;
+      bs_values_unused.erase(bs_used_new);
+    } else if (b_new > *bs_values_used.begin()) {
+      multiset<ull>::iterator bs_unused_new = bs_values_used.begin();
+      bs_values_unused.insert(*bs_unused_new);
+      bs_values_used.erase(bs_unused_new);
+      bs_used_sum -= *bs_unused_new;
+      bs_values_used.insert(b_new);
+      bs_used_sum += b_new;
+    } else {
+      bs_values_unused.erase(bs_values_unused.find(b_old));
+      bs_values_unused.insert(b_new);
     }
 
-    return highest_score_possible;
+    max_sum = max(max_sum, as_sum + bs_used_sum);
+  }
+
+  return max_sum;
 }
 
 int main(void) {
-    // Parse N, As, Bs, K, L from stdin
-    uint N, K, L;
-    vector<uint> As, Bs;
-    parse(N, As, Bs, K, L);
-    uint res = solve(N, As, Bs, K, L);
-    cout << res;
+  ios_base::sync_with_stdio(false);
+  cin.tie(NULL);
 
-    return EXIT_SUCCESS;
+  ull N;
+  cin >> N;
+
+  vector<ull> as(N);
+  vector<ull> bs(N);
+
+  fore(i, 0, N) {
+    cin >> as[i];
+  }
+  fore(i, 0, N) {
+    cin >> bs[i];
+  }
+
+  ull K, L;
+  cin >> K >> L;
+
+  cout << solve(as, bs, K, L) << endl;
+
+  return EXIT_SUCCESS;
 }
