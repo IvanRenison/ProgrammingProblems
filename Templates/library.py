@@ -58,3 +58,48 @@ def prod_mod(it: List[int], mod: int) -> int:
     for i in it:
         res = (res * i) % mod
     return res
+
+
+# define a class of multiset, using a dict of ints
+T = TypeVar('T')
+class Multiset:
+    def __init__(self, it: List[T] = []):
+        self._ms: Dict[T, int] = {}
+        for i in it:
+            self.add(i)
+
+    def add(self, x: T):
+        self._ms[x] = self._ms.get(x, 0) + 1
+
+    def remove(self, x: T):
+        self._ms[x] -= 1
+        if self._ms[x] == 0:
+            del self._ms[x]
+
+    def __len__(self) -> int:
+        return sum(self._ms.values())
+
+    def __iter__(self):
+        list: List[T] = []
+        for i in self._ms:
+            list += [i] * self._ms[i]
+
+    def __contains__(self, x: T) -> bool:
+        return x in self._ms
+
+    def __str__(self) -> str:
+        return str(self._ms)
+
+    def __repr__(self) -> str:
+        return repr(self._ms)
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Multiset):
+            return False
+        return self._ms == other._ms
+
+    def __hash__(self) -> int:
+        return hash(self._ms)
+
+    def __delitem__(self, x: T):
+        self.remove(x)
