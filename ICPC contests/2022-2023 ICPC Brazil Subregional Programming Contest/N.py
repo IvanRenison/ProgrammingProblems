@@ -1,34 +1,81 @@
 # https://codeforces.com/gym/103960/problem/N
 
 
-from heapq import nlargest
-from typing import List, Tuple
+from typing import Dict, List, Tuple
+
+
+def multiset_remove(ms: Dict[int, int], x: int):
+    ms[x] -= 1
+    if ms[x] == 0:
+        del ms[x]
+
+
+def multiset_add(ms: Dict[int, int], x: int):
+    ms[x] = ms.get(x, 0) + 1
 
 
 def solve(As: List[int], Bs: List[int], K: int, L: int) -> int:
     N: int = len(As)
-    highest_score_possible: int = 0
 
-    for i in range(K+1):
-        # Peak the 0..i-1 and K-i..K-1 cards
+    as_sum: int = 0
 
-        score: int = 0
-        for j in range(i):
-            score += As[j]
-        for j in range(N-(K-i), N):
-            score += As[j]
+    # multisets
+    bs_values_used: Dict[int, int] = {}
+    bs_values_unused: Dict[int, int] = {}
 
-        peaked_Bs: List[int] = Bs[:i] + Bs[N-(K-i):]
+    for i in range(K):
+        as_sum += As[i]
+        multiset_add(bs_values_used, Bs[i])
 
-        # Get L highest cards from peaked_Bs
-        highest: List[int] = nlargest(L, peaked_Bs)
+    # Keep only L in bs_values_used
+    while len(bs_values_used) > L:
+        min_bs_value: int = min(bs_values_used.keys())
+        multiset_remove(bs_values_used, min_bs_value)
+        multiset_add(bs_values_unused, min_bs_value)
 
-        for x in highest:
-            score += x
+    bs_used_sum: int = 0
+    for k, v in bs_values_used.items():
+        bs_used_sum += k * v
 
-        highest_score_possible = max(highest_score_possible, score)
+    max_sum: int = as_sum + bs_used_sum
 
-    return highest_score_possible
+    for i in range(1, K + 1):
+        a_old: int = As[K - i]
+        b_old: int = Bs[K - i]
+        a_new: int = As[N - i]
+        b_new: int = Bs[N - i]
+
+        as_sum -= a_old
+        as_sum += a_new
+
+        if b_old in bs_values_used:
+            multiset_add(bs_values_unused, b_new)
+
+            multiset_remove(bs_values_used, b_old)
+            bs_used_sum -= b_old
+
+            b_used_new: int = max(bs_values_unused.keys())
+
+            multiset_add(bs_values_used, b_used_new)
+            bs_used_sum += b_used_new
+            multiset_remove(bs_values_unused, b_used_new)
+
+        elif b_new > min(bs_values_used.keys()):
+            b_used_new: int = min(bs_values_used.keys())
+            multiset_add(bs_values_unused, b_used_new)
+            multiset_remove(bs_values_used, b_used_new)
+            bs_used_sum -= b_used_new
+
+            multiset_add(bs_values_used, b_new)
+            bs_used_sum += b_new
+
+        else:
+            multiset_remove(bs_values_unused, b_old)
+            multiset_add(bs_values_unused, b_new)
+
+        max_sum = max(max_sum, as_sum + bs_used_sum)
+
+    return max_sum
 
 
 def parse() -> Tuple[List[int], List[int], int, int]:
