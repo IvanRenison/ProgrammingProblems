@@ -1,22 +1,19 @@
-
-
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef unsigned int uint;
 typedef unsigned long long ull;
 
 /* For each number until N get the smallest prime that divides it */
-static inline uint* get_smallest_prime_factors(uint N) {
-  uint* smallest_prime_factors = (uint*)(calloc(N, sizeof(uint)));
+vector<ull> get_smallest_prime_factors(ull N) {
+  vector<ull> smallest_prime_factors(N);
 
-  for (uint i = 0; i < N; i++) {
+  for (ull i = 0; i < N; i++) {
     smallest_prime_factors[i] = i;
   }
 
-  for (uint i = 2; i * i < N; i++) {
+  for (ull i = 2; i * i < N; i++) {
     if (smallest_prime_factors[i] == i) {
-      for (uint j = i * i; j < N; j += i) {
+      for (ull j = i * i; j < N; j += i) {
         if (smallest_prime_factors[j] == j) {
           smallest_prime_factors[j] = i;
         }
@@ -27,56 +24,59 @@ static inline uint* get_smallest_prime_factors(uint N) {
   return smallest_prime_factors;
 }
 
-static inline vector<uint> prime_factors(uint* smallest_prime_factors, uint n) {
+/* smallest prime factor has to have the smallest ptime factor of each number until n */
+vector<ull> prime_factors(vector<ull> smallest_prime_factors, ull n) {
   if (n == 1) {
     return {};
   } else {
-    vector<uint> factors = {smallest_prime_factors[n]};
-    n = uint(n / smallest_prime_factors[n]);
+    vector<ull> factors = {smallest_prime_factors[n]};
+    n = ull(n / smallest_prime_factors[n]);
     while (n != 1) {
       if (smallest_prime_factors[n] != factors.back()) {
         factors.push_back(smallest_prime_factors[n]);
       }
-      n = uint(n / smallest_prime_factors[n]);
+      n = ull(n / smallest_prime_factors[n]);
     }
     return factors;
   }
 }
 
-#define mod 5 // Has to be prime for inverse_mod and div_mod
+#define MOD 5 // Has to be prime for inverse_mod and div_mod
 
-static inline ulong factorial_mod(ulong x) {
-  ulong result = 1;
-  for (ulong i = 2; i <= x; ++i) {
-    result = (result * i) % mod;
+ull factorial_mod(ull x) {
+  ull result = 1;
+  for (ull i = 2; i <= x; ++i) {
+    result = (result * i) % MOD;
   }
   return result;
 }
 
-static inline ulong pow_mod(ulong x, ulong y) {
-  ulong res = 1;
+ull pow_mod(ull x, ull y) {
+  ull res = 1;
   while (y > 0) {
     if (y % 2 == 1) {
-      res = (res * x) % mod;
+      res = (res * x) % MOD;
     }
     y = y / 2;
-    x = (x * x) % mod;
+    x = (x * x) % MOD;
   }
   return res;
 }
 
-static inline ulong inverse_mod(ulong x) {
-  return pow_mod(x, mod - 2);
+// With MOD prime
+ull inverse_mod(ull x) {
+  return pow_mod(x, MOD - 2);
 }
 
-static inline ulong div_mod(ulong x, ulong y) {
-  return ((x % mod) * (inverse_mod(y % mod))) % mod;
+// With MOD prime
+ull div_mod(ull x, ull y) {
+  return ((x % MOD) * (inverse_mod(y % MOD))) % MOD;
 }
 
-static inline ulong prod_mod(vector<ulong> xs) {
-  ulong result = 1;
-  for (ulong x : xs) {
-    result = (result * x) % mod;
+ull prod_mod(vector<ull> xs) {
+  ull result = 1;
+  for (ull x : xs) {
+    result = (result * x) % MOD;
   }
   return result;
 }
