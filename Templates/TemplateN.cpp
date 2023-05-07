@@ -24,7 +24,9 @@ int main(void) {
   cin >> t;
 
   fore(i, 0, t) {
-    cout << solve1(parse1()) << "\n";
+    auto x = parse1();
+    auto ans = solve1(x);
+    cout << ans << "\n";
   }
 
   return EXIT_SUCCESS;

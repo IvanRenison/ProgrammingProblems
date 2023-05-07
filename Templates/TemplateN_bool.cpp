@@ -24,7 +24,8 @@ int main(void) {
   cin >> t;
 
   fore(i, 0, t) {
-    if (solve1(parse1())) {
+    auto x = parse1();
+    if (solve1(x)) {
       cout << "Yes\n";
     } else {
       cout << "No\n";
