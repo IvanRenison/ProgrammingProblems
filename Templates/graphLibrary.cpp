@@ -119,22 +119,54 @@ vector<optional<Vertex>> Dijkstra(WeightedGraph g, Vertex s) {
   // return dist;
 }
 
-optional<vector<ull>> solve(WeightedGraph g) {
-  vector<optional<Vertex>> prev = Dijkstra(g, 0);
+class UnionFind {
+public:
+  ull n;
+  vector<ull> reprs; // representants
 
-  if (!prev[g.n - 1].has_value()) {
-    return {};
+  UnionFind(ull n) {
+    this->n = n;
+    reprs = vector<ull>(n);
+
+    fore(i, 0, n) {
+      reprs[i] = i;
+    }
   }
 
-  vector<ull> ans;
-  Vertex v = g.n - 1;
-  while (v != 0) {
-    ans.push_back(v);
-    v = prev[v].value();
+  /* Find the repentant of a element */
+  ull find(ull x) {
+    assert(x < n);
+    if (reprs[x] == x) {
+      return x;
+    } else {
+      ull r = find(reprs[x]);
+      reprs[x] = r;
+      return r;
+    }
   }
-  ans.push_back(0);
 
-  reverse(ans.begin(), ans.end());
+  /* Return true iff they have the same representant */
+  bool are_same(ull x, ull y) {
+    return find(x) == find(y);
+  }
 
-  return ans;
-}
+  /* Change the representant of the group of a element and return the old representant */
+  ull find_assign(ull x, ull n_r) {
+    assert(x < n);
+    if (reprs[x] == x) {
+      reprs[x] = n_r;
+      return x;
+    } else {
+      ull old_r = reprs[x];
+      reprs[x] = n_r;
+      return find_assign(old_r, n_r);
+    }
+  }
+
+  /* Join to parts, if they were already connected return true, else return false */
+  bool join(ull x, ull y) {
+    ull r_x = find(x);
+    ull r_y = find_assign(y, r_x);
+    return r_x == r_y;
+  }
+};
