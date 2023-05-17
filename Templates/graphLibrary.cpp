@@ -8,8 +8,7 @@ typedef unsigned long long ull;
 typedef ull Vertex;
 typedef tuple<Vertex, Vertex> Edge;
 
-class Graph {
-public:
+struct Graph {
   ull n;
   ull m;
   vector<Edge> edges;
@@ -47,8 +46,7 @@ typedef ull Vertex;
 typedef ull Weight;
 typedef tuple<Vertex, Vertex, Weight> wEdge;
 
-class WeightedGraph {
-public:
+struct WeightedGraph {
   ull n;
   ull m;
   vector<wEdge> edges;
@@ -119,8 +117,7 @@ vector<optional<Vertex>> Dijkstra(WeightedGraph g, Vertex s) {
   // return dist;
 }
 
-class UnionFind {
-public:
+struct UnionFind {
   ull n;
   vector<ull> reprs; // representants
 
