@@ -1,3 +1,5 @@
+// https://codeforces.com/gym/100623
+
 #include <bits/stdc++.h>
 #define fore(i, a, b) for (ll i = a; i < b; i++)
 

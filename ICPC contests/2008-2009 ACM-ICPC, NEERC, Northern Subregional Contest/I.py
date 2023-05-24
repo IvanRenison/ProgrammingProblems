@@ -1,3 +1,5 @@
+# https://codeforces.com/gym/100623
+
 from typing import List
 
 
