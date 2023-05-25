@@ -43,6 +43,10 @@ vector<ull> prime_factors(vector<ull> smallest_prime_factors, ull n) {
 
 #define MOD 5 // Has to be prime for inverse_mod and div_mod
 
+ull add_mod(ull x, ull y) {
+  return x + y < MOD ? x + y : x + y - MOD;
+}
+
 ull factorial_mod(ull x) {
   ull result = 1;
   for (ull i = 2; i <= x; ++i) {
