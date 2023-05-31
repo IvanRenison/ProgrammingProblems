@@ -93,10 +93,10 @@ struct Mod {
     return is;
   }
 
-  operator ull() {
+  operator ull() const {
     return x;
   }
-  operator ll() {
+  operator ll() const {
     return x;
   }
 };
