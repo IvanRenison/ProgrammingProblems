@@ -5,8 +5,8 @@
 using namespace std;
 
 typedef unsigned long long ull;
-typedef long long ll;
 #define fore(i, a, b) for (ull i = a; i < b; i++)
+typedef long long ll;
 
 ll euclid(ll a, ll b, ll& x, ll& y) {
   if (!b)
