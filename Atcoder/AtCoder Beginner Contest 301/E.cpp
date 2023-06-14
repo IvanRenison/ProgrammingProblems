@@ -1,5 +1,5 @@
 // https://atcoder.jp/contests/abc301/tasks/abc301_e
-// NOT WORKING
+
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -85,11 +85,11 @@ template <typename T> struct Matrix {
 };
 
 /* Make bfs from (i, j) and return distances to each candy and S and G */
-vector<ull>
+vector<optional<ull>>
 bfs(const Matrix<char> mat, pair<ull, ull> ij,
     const vector<pair<ull, ull>> candies) {
 
-  vector<ull> ans(candies.size() + 2);
+  vector<optional<ull>> ans(candies.size() + 2);
 
   Matrix<bool> visited(mat.n, mat.m, false);
   visited.assign(ij, true);
@@ -130,7 +130,7 @@ struct Graph {
   ull n;
 
   // 0 is S, n-1 is G
-  vector<vector<ull>> adj;
+  vector<vector<optional<ull>>> adj;
 };
 
 Graph buildGraph(
@@ -140,7 +140,7 @@ Graph buildGraph(
 
   ull n = candies.size() + 2;
 
-  vector<vector<ull>> adj(n);
+  vector<vector<optional<ull>>> adj(n);
 
   adj[0] = bfs(mat, S, candies);
   fore(i, 0, candies.size()) {
@@ -151,46 +151,49 @@ Graph buildGraph(
   return {n, adj};
 }
 
-struct DP {
-  Graph g;
+optional<ull> solve(
+    ull T, Matrix<char> mat, vector<pair<ull, ull>> candies, pair<ull, ull> S,
+    pair<ull, ull> G
+) {
+  Graph g = buildGraph(mat, candies, S, G);
 
-  // For each bitmask, the solution
-  vector<vector<optional<ull>>> dp;
-  ull n;
+  vector<vector<ull>> dp(g.n - 1, vector<ull>(1 << (g.n - 1), (1ull << 48)));
+  // dp[i][x] formas de empezar en 0, pasar por todos los bits de x y después ir a i
 
-  DP(Graph g) : g(g), dp(g.n, vector<optional<ull>>(1ULL << g.n)), n(g.n) {}
-
-  // Solve starting from x and passing by bits in one in bits
-  ull solveFor(ull bits, ull x) {
-    bits &= ~(1ULL << x);
-
-    optional<ull> stored = dp[x][bits];
-
-    if (stored.has_value()) {
-      return stored.value();
-    }
-
-    if (x == n - 1) {
-      if (bits == 0) {
-        dp[x][bits] = 0;
-        return 0;
-      } else {
-        dp[x][bits] = 1000000000;
-        return 1000000000;
+  dp[0][0] = 0;
+  fore(x, 1, 1ull << (g.n - 1)) {
+    fore(v, 1, g.n - 1) {
+      if ((x & (1 << v)) == 0) {
+        ull this_ans = (1ull << 48);
+        fore(u, 0, g.n - 1) {
+          if ((x & (1 << u)) != 0 && g.adj[u][v].has_value()) {
+            this_ans =
+                min(this_ans, g.adj[u][v].value() + dp[u][x & ~(1 << u)]);
+          }
+        }
+        dp[v][x] = this_ans;
       }
     }
-
-    ull ans = 1000000000;
-    fore(i, 0, n) {
-      if ((bits & (1ULL << i)) != 0) {
-        ans = min(ans, g.adj[x][i] + solveFor(bits, i));
-      }
-    }
-
-    dp[x][bits] = ans;
-    return ans;
   }
-};
+
+  optional<ull> ans;
+  if (g.adj[0][g.n - 1].has_value() && g.adj[0][g.n - 1].value() <= T) {
+    ans = 0;
+  }
+  fore(x, 1, 1ull << (g.n - 1)) {
+    fore(v, 1, g.n - 1) {
+      if ((x & (1 << v)) == 0 && g.adj[v][g.n - 1].has_value()) {
+        if (!ans.has_value() && dp[v][x] + g.adj[v][g.n - 1].value() <= T) {
+          ans = ull(__builtin_popcount(x & ~1) + 1);
+        } else if (ans.has_value() && dp[v][x] + g.adj[v][g.n - 1].value() <= T) {
+          ans = max(ans.value(), ull(__builtin_popcount(x & ~1) + 1));
+        }
+      }
+    }
+  }
+
+  return ans;
+}
 
 int main(void) {
   ios_base::sync_with_stdio(false);
@@ -227,35 +230,13 @@ int main(void) {
     }
   }
 
-  Graph g = buildGraph(mat, candies, S, G);
+  optional<ull> ans = solve(T, mat, candies, S, G);
 
-  DP dp(g);
-
-  ull ans = dp.solveFor((1ULL << g.n) - 1, g.n - 1);
-
-  if (ans <= T) {
-    cout << g.n - 2 << '\n';
+  if (ans.has_value()) {
+    cout << ans.value() << '\n';
+  } else {
+    cout << "-1\n";
   }
 
-  vector<ull> posibles(g.n - 2, false);
-
-  fore(x, 0, (1ULL << g.n) - 1) {
-    if ((x & 1) != 0) {
-      ull x_ans = dp.solveFor(x, g.n - 1);
-      if (x_ans <= T) {
-        posibles[__builtin_popcount(x) - 2] = true;
-      }
-    }
-  }
-
-  for (ull x = g.n - 3; x < g.n; x--) {
-    if (posibles[x]) {
-      cout << x << '\n';
-      return EXIT_SUCCESS;
-    }
-  }
-
-
-  cout << -1 << '\n';
   return EXIT_SUCCESS;
 }
