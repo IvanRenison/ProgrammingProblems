@@ -1,12 +1,23 @@
 // https://www.spoj.com/problems/FASTFLOW/
 
-#include <bits/stdc++.h>
+#ifndef NDEBUG
+#define NDEBUG
+#endif
+#include <cassert>
+
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
 
 using namespace std;
 
 typedef unsigned long long ull;
 typedef long long ll;
 #define fore(i, a, b) for (ull i = a; i < b; i++)
+
+
+#define ULLONG_MAX 0xffffffffffffffffull
 
 typedef ull Vertex;
 typedef ull Edge;
@@ -15,8 +26,25 @@ typedef ll Value;
 typedef vector<Value> Flow;
 typedef vector<Edge> Path;
 
-class UndirectedNetwork {
+// define class optional for C++14
+template <typename T> class optional {
+  bool _has_value;
+  T _value;
+
 public:
+  optional() : _has_value(false) {}
+  optional(T value) : _has_value(true), _value(value) {}
+
+  bool has_value() const {
+    return _has_value;
+  }
+  T value() const {
+    assert(_has_value);
+    return _value;
+  }
+};
+
+struct UndirectedNetwork {
   ull n;
   ull m;
 
@@ -30,7 +58,7 @@ public:
 
   // Constructor
   UndirectedNetwork(
-      ull n, ull s, ull t, vector<pair<ull, ull>> edges, vector<ull> cs
+      ull n, ull s, ull t, const vector<pair<ull, ull>>& edges, const vector<ull>& cs
   ) {
     this->n = n;
     this->m = edges.size();
@@ -52,14 +80,14 @@ public:
     }
   }
 
-  ll flowValue(const Flow flow) const {
+  ll flowValue(const Flow& flow) const {
     ll ans = 0;
 
-    for (auto [_, e] : adj[s]) {
+    for (auto _e : adj[s]) {
+      ull e = _e.second;
       if (s == edges[e].first) {
         ans += flow[e];
-      }
-      else {
+      } else {
         ans -= flow[e];
       }
     }
@@ -67,7 +95,7 @@ public:
     return ans;
   }
 
-  bool isFlowValid(Flow flow) const {
+/*   bool isFlowValid(Flow& flow) const {
     fore(i, 0, m) {
       if (abs(flow[i]) > (ll)cs[i]) {
         return false;
@@ -75,9 +103,9 @@ public:
     }
 
     return true;
-  }
+  } */
 
-  ull f_capacity_to(const Flow flow, Edge e, Vertex v) const {
+  ull f_capacity_to(const Flow& flow, Edge e, Vertex v) const {
     if (v == edges[e].second) {
       // Side u v
       return (ull)((ll)cs[e] - flow[e]);
@@ -87,7 +115,7 @@ public:
     }
   }
 
-  optional<Path> find_f_path(const Flow flow) const {
+  optional<Path> find_f_path(const Flow& flow) const {
 
     vector<bool> visited(n, false);
     vector<optional<Edge>> parent(n);
@@ -98,8 +126,8 @@ public:
     while (queue_position < queue.size()) {
       Vertex u = queue[queue_position];
 
-      for (auto [v, e] : adj[u]) {
-
+      for (auto ve : adj[u]) {
+        ull v = ve.first, e = ve.second;
 
         if (!visited[v] && f_capacity_to(flow, e, v) > 0) {
           visited[v] = true;
@@ -130,10 +158,10 @@ public:
       queue_position++;
     }
 
-    return nullopt;
+    return {};
   }
 
-  ull path_capacity(const Flow flow, const Path path) const {
+  ull path_capacity(const Flow& flow, const Path& path) const {
     ull ans = ULLONG_MAX;
 
     Vertex last = s;
@@ -147,7 +175,7 @@ public:
   }
 };
 
-Flow EdmondsKarp(const UndirectedNetwork N) {
+Flow EdmondsKarp(const UndirectedNetwork& N) {
   Flow flow(N.m, 0);
 
   while (true) {
@@ -177,13 +205,13 @@ Flow EdmondsKarp(const UndirectedNetwork N) {
       }
     }
 
-    if (!N.isFlowValid(flow)) {
+/*     if (!N.isFlowValid(flow)) {
       assert(false);
-    }
+    } */
   }
 }
 
-ull solve(ull n, vector<pair<ull, ull>> edges, vector<ull> cs) {
+ull solve(ull n, vector<pair<ull, ull>>& edges, vector<ull>& cs) {
   UndirectedNetwork N(n, 0, n - 1, edges, cs);
 
   Flow maxFlow = EdmondsKarp(N);
@@ -193,7 +221,7 @@ ull solve(ull n, vector<pair<ull, ull>> edges, vector<ull> cs) {
 
 int main(void) {
   ios_base::sync_with_stdio(false);
-  cin.tie(NULL);
+  cin.tie(NULL), cout.tie(NULL);
 
   ull n, m;
 
