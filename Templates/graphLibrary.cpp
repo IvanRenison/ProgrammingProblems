@@ -26,6 +26,22 @@ struct Graph {
   }
 };
 
+struct DirectedGraph {
+  ull n;
+  ull m;
+  vector<Edge> edges;
+  vector<vector<Vertex>> adj_fordward;
+  vector<vector<Vertex>> adj_backward;
+
+  DirectedGraph(ull n, vector<Edge> edges)
+      : n(n), m(edges.size()), edges(edges), adj_fordward(n), adj_backward(n) {
+    for (auto [u, v] : edges) {
+      adj_fordward[u].push_back(v);
+      adj_backward[v].push_back(u);
+    }
+  }
+};
+
 pair<ull, vector<Edge>> readGraph() {
   ull n, m;
   cin >> n >> m;
