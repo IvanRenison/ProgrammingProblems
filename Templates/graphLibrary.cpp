@@ -14,11 +14,8 @@ struct Graph {
   vector<Edge> edges;
   vector<vector<Vertex>> adj;
 
-  Graph(ull n, vector<Edge> edges) {
-    this->n = n;
-    this->m = edges.size();
-    this->edges = edges;
-    this->adj = vector<vector<Vertex>>(n);
+  Graph(ull n, vector<Edge> edges)
+      : n(n), m(edges.size()), edges(edges), adj(n) {
     for (auto [u, v] : edges) {
       adj[u].push_back(v);
       adj[v].push_back(u);
@@ -68,11 +65,8 @@ struct WeightedGraph {
   vector<wEdge> edges;
   vector<vector<pair<Vertex, Weight>>> adj;
 
-  WeightedGraph(ull n, vector<wEdge> edges) {
-    this->n = n;
-    this->m = edges.size();
-    this->edges = edges;
-    this->adj = vector<vector<pair<Vertex, Weight>>>(n);
+  WeightedGraph(ull n, vector<wEdge> edges)
+      : n(n), m(edges.size()), edges(edges), adj(n) {
     for (auto [u, v, w] : edges) {
       adj[u].push_back({v, w});
       adj[v].push_back({u, w});
