@@ -114,7 +114,7 @@ class segmentsWeights {
   }
 };
 
-/* Find the minimum index for witch f is true or or it.size() if none if true */
+/* Find the minimum index for witch f is true or it.size() if none if true */
 template <typename T> ull binary_search(function<bool(T)> f, vector<T> it) {
   ull lower = 0;
   ull upper = it.size();
@@ -135,7 +135,7 @@ template <typename T> ull binary_search(function<bool(T)> f, vector<T> it) {
 
   return upper;
 }
-/* Find the minimum index for witch f is true or or upper if none if true */
+/* Find the minimum index for witch f is true or upper if none if true */
 ull binary_search(function<bool(ull)> f, ull lower, ull upper) {
   if (f(lower)) {
     return lower;
