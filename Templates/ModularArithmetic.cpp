@@ -15,7 +15,7 @@ ll euclid(ll a, ll b, ll& x, ll& y) {
   return y -= a / b * x, d;
 }
 
-const ull mod = (1e9 + 7);
+constexpr ull mod = (1e9 + 7);
 struct Mod {
   ull x;
   Mod(ull xx) : x(xx) {}
