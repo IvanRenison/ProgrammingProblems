@@ -5,6 +5,7 @@
 using namespace std;
 
 typedef unsigned long long ull;
+typedef long long ll;
 #define fore(i, a, b) for (ull i = a; i < b; i++)
 
 void parse1(void) {
