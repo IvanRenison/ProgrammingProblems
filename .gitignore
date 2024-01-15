@@ -1,2 +1,4 @@
 *.exe
 *a.out
+*.vscode
+*.mypy_cache
