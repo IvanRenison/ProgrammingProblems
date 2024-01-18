@@ -1,13 +1,13 @@
-Equipo,Contest, Problema, Código, En contest (Creado | Usado | Deseado), En upsolving (Creado | Usado | Deseado)
-estáLejos(Plutón), 2011 USP Try-outs, A, lazySegmentTree, Usado,
-AEIØŪ, 2016 USP Try-outs, A, solveLinear, , Usado
-AEIØŪ, 2016 USP Try-outs, A, solveLinear para 2×2, , Deseado
-AEIØŪ, 2016 USP Try-outs, E, AhoCorasick, , Usado
-Gracias Mateo, 2023-2024 ICPC Central Europe Regional Contest (CERC 23), B, General Weighted Matching, Deseado (Inesesrio),
-Gracias Mateo, 2023-2024 ICPC Central Europe Regional Contest (CERC 23), G, Búsqueda Ternaria, Usada,
-Gracias Mateo, 2021-2022 ICPC Moscow Subregional, I, randin, Usado,
-Gracias Mateo, 2021-2022 ICPC Moscow Subregional, L, Dinic, Usado,
-Gracias Mateo, 2021-2022 ICPC Moscow Subregional, M, Dijkstra, , Codeado
-Gracias Mateo, 2019-2020 ICPC Moscow Subregional, D, DayOfWeek, Usado,
-Gracias Mateo, 2019-2020 ICPC Moscow Subregional, H, SegmentTree, , Usado
-Gracias Mateo, 2019-2020 ICPC Moscow Subregional, J, SegmentTree, , Usado
+Equipo, Contest, Problema, Código, En contest, En upsolving
+estáLejos(Plutón), USP Try-outs 2011, A, lazySegmentTree, Usado,
+AEIØŪ, USP Try-outs 2016, A, solveLinear, , Usado
+AEIØŪ, USP Try-outs 2016, A, solveLinear para 2×2, , Deseado
+AEIØŪ, USP Try-outs 2016, E, AhoCorasick, , Usado
+Gracias Mateo, CERC Central Europe Regional 2023-2024, B, General Weighted Matching, Deseado (Inesesrio),
+Gracias Mateo, CERC Central Europe Regional 2023-2024, G, Búsqueda Ternaria, Usada,
+Gracias Mateo, NEERC Moscow Subregional 2021-2022, I, randin, Usado,
+Gracias Mateo, NEERC Moscow Subregional 2021-2022, L, Dinic, Usado,
+Gracias Mateo, NEERC Moscow Subregional 2021-2022, M, Dijkstra, , Codeado
+Gracias Mateo, NEERC Moscow Subregional 2019-2020, D, DayOfWeek, Usado,
+Gracias Mateo, NEERC Moscow Subregional 2019-2020, H, SegmentTree, , Usado
+Gracias Mateo, NEERC Moscow Subregional 2019-2020, J, SegmentTree, , Usado
