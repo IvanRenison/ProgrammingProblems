@@ -22,16 +22,14 @@ typedef vector<ll> vi;
  * Status: stress-tested
  */
 vi Z(const string& S) {
-  vi z(SZ(S));
-  ll l = -1, r = -1;
-  rep(i,1,SZ(S)) {
-    z[i] = i >= r ? 0 : min(r - (ll)i, z[i - l]);
-    while (i + z[i] < SZ(S) && S[i + z[i]] == S[z[i]])
-      z[i]++;
-    if (i + z[i] > r)
-      l = i, r = i + z[i];
-  }
-  return z;
+	vi z(SZ(S));
+	ll l = 0, r = 0;
+	rep(i,1,SZ(S)) {
+		z[i] = min(max(r - i, 0ll), z[i - l]);
+		while (i + z[i] < SZ(S) && S[i + z[i]] == S[z[i]])
+			z[i]++, l = i, r = i + z[i];
+	}
+	return z;
 }
 
 string bestRoot(const string& S) {
