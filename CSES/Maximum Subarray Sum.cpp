@@ -8,27 +8,17 @@ typedef unsigned long long ull;
 typedef long long ll;
 typedef vector<ll> vi;
 
-#define fore(i, a, b) for (ull i = a, gmat = b; i < gmat; i++)
-
-const ll inf = 1ll << 60;
-
 ll solve(const vi& as) {
-  ull n = as.size();
-
-  vi as_sums(n + 1);
-  fore(i, 0, n) {
-    as_sums[i + 1] = as_sums[i] + as[i];
+  ll ans = 0;
+  ll sum = 0;
+  for (ll a : as) {
+    sum += a;
+    ans = max(ans, sum);
+    sum = max(sum, 0ll);
   }
 
-  ll min_sum = 0;
-
-  ll ans = -inf;
-
-  fore(i, 1, n + 1) {
-    ll this_ans = as_sums[i] - min_sum;
-    ans = max(ans, this_ans);
-
-    min_sum = min(min_sum, as_sums[i]);
+  if (ans == 0) {
+    ans = *max_element(as.begin(), as.end());
   }
 
   return ans;
