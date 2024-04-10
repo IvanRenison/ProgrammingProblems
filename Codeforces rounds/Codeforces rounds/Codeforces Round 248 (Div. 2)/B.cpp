@@ -1,76 +1,49 @@
-// https://codeforces.com/problemset/problem/433/B
+// https://codeforces.com/contest/433/problem/B
 
 #include <bits/stdc++.h>
 
 using namespace std;
 
 typedef unsigned long long ull;
-#define fore(i, a, b) for (ull i = a; i < b; i++)
+typedef vector<ull> vu;
 
-vector<ull> solve(vector<ull> vs, vector<tuple<ull, ull, ull>> qs) {
-  ull n = vs.size();
-  ull m = qs.size();
-
-  vector<ull> vs_sums(n + 1);
-  vs_sums[0] = 0;
-  fore(i, 1, n + 1) {
-    vs_sums[i] = vs_sums[i - 1] + vs[i - 1];
-  }
-
-  vector<ull> vs_sorted = vs;
-  sort(vs_sorted.begin(), vs_sorted.end());
-
-  vector<ull> vs_sorted_sums(n + 1);
-  vs_sorted_sums[0] = 0;
-  fore(i, 1, n + 1) {
-    vs_sorted_sums[i] = vs_sorted_sums[i - 1] + vs_sorted[i - 1];
-  }
-
-  vector<ull> ans(m);
-
-  fore(i, 0, m) {
-    ull t, l, r;
-    tie(t, l, r) = qs[i];
-
-    if (t == 1) {
-      ans[i] = vs_sums[r] - vs_sums[l - 1];
-    } else {
-      ans[i] = vs_sorted_sums[r] - vs_sorted_sums[l - 1];
-    }
-  }
-
-  return ans;
-}
+#define fore(i, a, b) for (ull i = a, gmat = b; i < gmat; i++)
+#define ALL(x) x.begin(), x.end()
 
 int main(void) {
   ios_base::sync_with_stdio(false);
-  cin.tie(NULL);
+  cin.tie(nullptr);
 
   ull n;
   cin >> n;
+  vu vs(n);
+  for (ull& v : vs) {
+    cin >> v;
+  }
 
-  vector<ull> vs(n);
+  vu vs_ord = vs;
+  sort(ALL(vs_ord));
 
+  vu vs_sums(n + 1), vs_ord_sums(n + 1);
   fore(i, 0, n) {
-    cin >> vs[i];
+    vs_sums[i + 1] = vs_sums[i] + vs[i];
+    vs_ord_sums[i + 1] = vs_ord_sums[i] + vs_ord[i];
   }
 
   ull m;
   cin >> m;
+  while (m--) {
+    ull type, l, r;
+    cin >> type >> l >> r;
+    l--;
 
-  vector<tuple<ull, ull, ull>> qs;
+    ull ans;
+    if (type == 1) {
+      ans = vs_sums[r] - vs_sums[l];
+    } else {
+      ans = vs_ord_sums[r] - vs_ord_sums[l];
+    }
 
-  fore(i, 0, m) {
-    ull t, l, r;
-    cin >> t >> l >> r;
-    qs.push_back(make_tuple(t, l, r));
+    cout << ans << '\n';
   }
-
-  vector<ull> ans = solve(vs, qs);
-
-  fore(i, 0, m) {
-    cout << ans[i] << "\n";
-  }
-
-  return EXIT_SUCCESS;
 }
