@@ -1,24 +1,18 @@
 # https://codeforces.com/contest/1833/problem/A
 
-from typing import Dict, Set
-
-
-def parse1() -> str:
-    input()
-    return input()
-
-
-def solve1(ss: str) -> int:
-    d: Set[str] = set()
-    for i in range(len(ss)-1):
-        d.add(ss[i:i+2])
+def solve1(s: str) -> int:
+    d: set[str] = set()
+    for i in range(len(s)-1):
+        d.add(s[i:i+2])
     return len(d)
 
 
 def main():
     t: int = int(input())
     for _ in range(t):
-        print(solve1(parse1()))
+        input()
+        s: str = input()
+        print(solve1(s))
 
 
 if __name__ == '__main__':
