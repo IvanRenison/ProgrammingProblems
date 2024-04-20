@@ -41,9 +41,8 @@ vb BCC(uint n, const vuu& edges) { // Return bridges
   vb ans(m, true);
 
   function<uint(uint, uint)> dfs = [&](uint at, uint par){
-    uint me = num[at] = ++Time, e, y, top = me;
-    for (auto pa : ed[at]) if (pa.second != par) {
-      tie(y, e) = pa;
+    uint me = num[at] = ++Time, top = me;
+    for (auto [y, e] : ed[at]) if (e != par) {
       if (num[y]) {
         top = min(top, num[y]);
         if (num[y] < me)
