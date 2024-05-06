@@ -8,7 +8,7 @@
 #define _GLIBCXX_SANITIZE_VECTOR 1
 #endif
 
-#pragma GCC optimize("O3")
+//#pragma GCC optimize("O3")
 
 #include <bits/stdc++.h>
 
@@ -43,7 +43,9 @@ vb BCC(uint n, const vuu& edges) { // Return bridges
   function<uint(uint, uint)> dfs = [&](uint at, uint par){
     uint me = num[at] = ++Time, top = me;
     for (auto [y, e] : ed[at]) if (e != par) {
-      if (num[y]) {
+      if (y == at) {
+        ans[e] = false;
+      } else if (num[y]) {
         top = min(top, num[y]);
         if (num[y] < me)
           st.push_back(e);
@@ -76,55 +78,6 @@ vb BCC(uint n, const vuu& edges) { // Return bridges
 
   return ans;
 };
-
-vb bridges_multiedges(uint n, const vuu& edges) { // for graphs with multiple edges and self loops
-  uint m = edges.size();
-
-  vb ans(m, true);
-
-  map<uu, vu> edges_original_ids;
-  fore(e, 0, m) {
-    auto [u, v] = edges[e];
-    if (u > v) {
-      swap(u, v);
-    }
-
-    if (u != v) {
-      edges_original_ids[{u, v}].push_back(e);
-    } else {
-      ans[e] = false;
-    }
-  }
-
-  uint m_ = edges_original_ids.size();
-  vuu edges_(m_);
-  vu edges_original_id(m_);
-
-  edges_.reserve(m_);
-  edges_original_id.reserve(m_);
-
-  for (auto& [uv, es] : edges_original_ids) {
-    edges_.push_back(uv);
-    if (es.size() == 1) {
-      edges_original_id.push_back(es[0]);
-    } else {
-      edges_original_id.push_back(inf);
-      for (uint e : es) {
-        ans[e] = false;
-      }
-    }
-  }
-
-  vb bcc = BCC(n, edges_);
-
-  fore(e_, 0, edges_.size()) {
-    if (!bcc[e_] && edges_original_id[e_] != inf) {
-      ans[edges_original_id[e_]] = false;
-    }
-  }
-
-  return ans;
-}
 
 /** Author: Lukas Polacek
  * Date: 2009-10-26
@@ -165,6 +118,7 @@ struct ModeCounter { // Count how many times the mode appears
     modeCount = max(modeCount, appears[a]);
   }
   void erase(uint a) {
+    assert(appears[a] > 0);
     if (count[appears[a]] == 1 && appears[a] == modeCount) {
       count[appears[a]] = 0;
       appears[a]--;
@@ -342,7 +296,7 @@ pair<uint, vu> solveCon(vu& as, const vuu& edges) {
 
   tie(max_a, as) = compress(as);
 
-  vb bridges = bridges_multiedges(n, edges);
+  vb bridges = BCC(n, edges);
 
   UF uf(n);
 
