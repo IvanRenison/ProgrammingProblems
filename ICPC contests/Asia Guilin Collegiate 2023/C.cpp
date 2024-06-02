@@ -171,7 +171,6 @@ struct Z2Base {
     x = red(x);
     if (x != 0) {
       bs.push_back(x);
-      sort(ALL(bs), greater<>());
     }
   }
   bool in(ull x) const {
