@@ -53,14 +53,18 @@ struct Point {
   P rotate(ld a) const {
     return P(x*cos(a)-y*sin(a),x*sin(a)+y*cos(a)); }
   P rot(P r){return P(cross(r),dot(r));}
-  bool left(P p, P q){ // is it to the left of directed line pq?
-    return (q-p).cross(*this-p) > eps;}
   friend ostream& operator<<(ostream& os, P p) {
     return os << "(" << p.x << "," << p.y << ")"; }
 };
 
 typedef Point<ld> P;
 
+template<class P>
+ll sideOf(const P& s, const P& e, const P& p, double eps) {
+  auto a = (e-s).cross(p-s);
+  double l = (e-s).dist()*eps;
+  return (a > l) - (a < -l);
+}
 
 /** Author: Ulf Lundstrom
  * Date: 2009-03-21
@@ -130,7 +134,6 @@ TY type(P p, P q, P a, P b, P c) {
   }
 }
 
-
 /** Author: Ulf Lundstrom
  * Date: 2009-03-21
  * License: CC0
@@ -176,99 +179,79 @@ vector<P> convexHull(vector<P> pts) {
   return {h.begin(), h.begin() + t - (t == 2 && h[0] == h[1])};
 }
 
-// Compute Minkowski sum of two CONVEX polygons (remove collinear first)
-// Returns answer in CCW order
 void reorder(vector<P> &p){
-  if(!p[2].left(p[0],p[1])) reverse(ALL(p));
-  ll pos=0;
-  fore(i,1,SZ(p)) if(P(p[i].y,p[i].x) < P(p[pos].y,p[pos].x)) pos=i;
-  rotate(p.begin(), p.begin()+pos, p.end());
+	if (sideOf(p[0], p[1], p[2], eps) < 0) reverse(ALL(p));
+	rotate(p.begin(), min_element(ALL(p)), p.end());
 }
-vector<P> minkowski_sum(vector<P> p, vector<P> q){
-  if(min(SZ(p),SZ(q))<3){
-    vector<P> v;
-    for(P pp:p) for(P qq:q) v.pb(pp+qq);
-    return convexHull(v);
-  }
-  reorder(p); reorder(q);
-  fore(i,0,2) p.pb(p[i]), q.pb(q[i]);
-  vector<P> r;
-  ll i=0,j=0;
-  while(i+2<SZ(p)||j+2<SZ(q)){
-    r.pb(p[i]+q[j]);
-    auto cross=(p[i+1]-p[i]).cross(q[j+1]-q[j]);
-    i+=cross>=-eps;
-    j+=cross<=eps;
-  }
-  return r;
+vector<P> minkowskiSum(vector<P> p, vector<P> q) {
+	if (min(SZ(p), SZ(q)) < 3) {
+		vector<P> v;
+		for (P pp : p) for (P qq : q) v.pb(pp + qq);
+		return convexHull(v);
+	}
+	reorder(p), reorder(q);
+	fore(i, 0, 2) p.pb(p[i]), q.pb(q[i]);
+	vector<P> r;
+	ll i = 0, j = 0;
+	while (i + 2 < SZ(p) || j + 2 < SZ(q)) {
+		r.pb(p[i] + q[j]);
+		ld cross = (p[i + 1] - p[i]).cross(q[j + 1] - q[j]);
+		i += cross >= -eps, j += cross <= eps;
+	}
+	return r;
 }
 
-P ccw90(1,0);
+/** Author: Ulf Lundstrom
+ * Date: 2009-03-21
+ * License: CC0
+ * Source:
+ * Description: Returns where p$ is as seen from s$ towards e$. 1/0/-1 $\Leftrightarrow$ left/on line/right.
+ * If the optional argument eps$ is given 0 is returned if p$ is within distance eps$ from the line.
+ * P is supposed to be Point<T> where T is e.g. double or ll.
+ * It uses products in intermediate steps so watch out for overflow if using int or ll.
+ * Usage:
+ * 	bool left = sideOf(p1,p2,q)==1;
+ * Status: tested
+ */
+template<class P>
+ll sideOf(P s, P e, P p) { return sgn(s.cross(e, p)); }
 
-int sgn2(double x){return x<0?-1:1;}
-struct ln {
-  P p,pq;
-  ln(P p, P q):p(p),pq(q-p){}
-  ln(){}
-  bool has(P r){return dist(r)<=eps;}
-  bool seghas(P r){return has(r)&&(r-p).dot(r-(p+pq))<=eps;}
-//	bool operator /(ln l){return (pq.unit()^l.pq.unit()).norm()<=eps;} // 3D
-  bool operator/(ln l){return abs((pq.unit()).cross(l.pq.unit()))<=eps;} // 2D
-  bool operator==(ln l){return *this/l&&has(l.p);}
-  P operator^(ln l){ // intersection
-    if(*this/l)return P(inf,inf);
-    P r=l.p+l.pq*((p-l.p).cross(pq)/((l.pq).cross(pq)));
-//		if(!has(r)){return P(NAN,NAN,NAN);} // check only for 3D
-    return r;
-  }
-  double angle(ln l){return pq.angle(l.pq);}
-  int side(P r){return has(r)?0:sgn2(pq.cross(r-p));} // 2D
-  P proj(P r){return p+pq*((r-p).dot(pq)/pq.dist2());}
-  P ref(P r){return proj(r)*2-r;}
-  double dist(P r){return (r-proj(r)).dist();}
-  ln rot(auto a){return ln(p,p+pq.rot(a));} // 2D
-};
-ln bisector(ln l, ln m){ // angle bisector
-  P p=l^m;
-  return ln(p,p+l.pq.unit()+m.pq.unit());
-}
-ln bisector(P p, P q){ // segment bisector (2D)
-  return ln((p+q)*.5,p).rot(ccw90);
+template<class P>
+ll sideOf(const P& s, const P& e, const P& p, ld eps) {
+  auto a = (e-s).cross(p-s);
+  ld l = (e-s).dist()*eps;
+  return (a > l) - (a < -l);
 }
 
-// polygon intersecting left side of halfplanes
-struct halfplane:public ln{
-  double angle;
-  halfplane(){}
-  halfplane(P a,P b){p=a; pq=b-a; angle=atan2(pq.y,pq.x);}
-  bool operator<(halfplane b)const{return angle<b.angle;}
-  bool out(P q){return pq.cross(q-p)<-eps;}
-};
-vector<P> intersect(vector<halfplane> b){ // O(n*log(n))
-  vector<P>bx={P{inf,inf},P{-inf,inf},P{-inf,-inf},P{inf,-inf}};
-  fore(i,0,4) b.pb(halfplane(bx[i],bx[(i+1)%4]));
-  sort(ALL(b));
-  int n=SZ(b),q=1,h=0;
-  vector<halfplane> c(SZ(b)+10);
-  fore(i,0,n){
-    while(q<h&&b[i].out(c[h]^c[h-1])) h--;
-    while(q<h&&b[i].out(c[q]^c[q+1])) q++;
-    c[++h]=b[i];
-    if(q<h&&abs(c[h].pq.cross(c[h-1].pq))<eps){
-      if(c[h].pq.dot(c[h-1].pq)<=0) return {};
-      h--;
-      if(b[i].out(c[h].p)) c[h]=b[i];
-    }
-  }
-  while(q<h-1&&c[q].out(c[h]^c[h-1]))h--;
-  while(q<h-1&&c[h].out(c[q]^c[q+1]))q++;
-  if(h-q<=1)return {};
-  c[h+1]=c[q];
-  vector<P> s;
-  fore(i,q,h+1) s.pb(c[i]^c[i+1]);
-  return s;
-}
+typedef pair<P, P> Line;
+#define L(a) a.fst, a.snd
 
+ll angDiff(Line a, Line b) {
+	return sgn((a.snd-a.fst).angle() - (b.snd-b.fst).angle());
+}
+vector<P> halfPlaneIntersection(vector<Line> v) {
+	sort(ALL(v), [&](Line a, Line b) {
+		ll s = angDiff(a, b);
+		return (s ? s : sideOf(L(a), b.fst)) < 0;
+	});
+	ll ah = 0, at = 0, n = SZ(v);
+	vector<Line> deq(n + 1);
+	vector<P> ans(n);
+	deq[0] = v[0];
+	fore(i, 1, n + 1) {
+		if (i == n) v.pb(deq[ah]);
+		if (angDiff(v[i], v[i - 1])) {
+			while (ah < at && sideOf(L(v[i]), ans[at-1], eps) < 0)
+				at--;
+			while (i < n && ah < at && sideOf(L(v[i]),ans[ah],eps)<0)
+				ah++;
+			auto [r, p] = lineInter(L(v[i]), L(deq[at]));
+			if (r == 1) ans[at++] = p, deq[at] = v[i];
+		}
+	}
+	if (at - ah < 3) return {};
+	return {ans.begin() + ah, ans.begin() + at};
+}
 
 ld solve(const vector<P>& A, const vector<P>& B) {
   ll N = A.size(), M = B.size();
@@ -305,14 +288,9 @@ ld solve(const vector<P>& A, const vector<P>& B) {
     }
   }
 
-  vector<halfplane> hps;
-  for (auto [p, q] : planes) {
-    hps.push_back(halfplane(p, q));
-  }
+  vector<P> poly = halfPlaneIntersection(planes);
 
-  vector<P> poly = intersect(hps);
-
-  vector<P> poly_ans = minkowski_sum(B, poly);
+  vector<P> poly_ans = minkowskiSum(B, poly);
   ld ans = polygonArea2(poly_ans) / 2.0;
 
   return ans;
@@ -339,5 +317,4 @@ signed main(){
   ld ans = solve(A, B);
   cout << setprecision(8) << fixed;
   cout << ans << '\n';
-
 }
