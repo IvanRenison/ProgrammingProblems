@@ -11,7 +11,6 @@ typedef vector<ii> vii;
 typedef array<ll, 3> iii;
 typedef vector<iii> viii;
 
-
 optional<viii> solveOrd(ll a, ll b, ll c) {
   assert(a <= b && b <= c);
   if (a * b < c) {
@@ -139,12 +138,3 @@ int main() {
   }
 #endif
 }
-
-/*
-
-
-
-qqqqq
-qqqqq
-
-*/
