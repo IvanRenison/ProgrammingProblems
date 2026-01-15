@@ -218,28 +218,21 @@ optional<ull> solve(ull s, ull h, vuu& kgs) {
     min_keys.upd(g, k);
   }
 
-  unordered_map<ull, ull> dp;
-  dp[s] = 0;
-
   auto fun = [&](ull x, auto&& fun) -> ull {
-    if (dp.count(x)) {
-      return dp[x];
+    if (x == s) {
+      return 0;
     }
-    ull ans;
 
-    //assert(x != s);
     if (x < s) {
       ull max_key = max_keys.query(x, s + 1);
       //assert(max_key > x);
       //assert(max_key < lim_cord);
-      ans = fun(max_key, fun) + max_key - x;
+      return fun(max_key, fun) + max_key - x;
     } else {
       ull min_key = min_keys.query(s, x + 1);
       //assert(min_key < x);
-      ans = fun(min_key, fun) + x - min_key;
+      return fun(min_key, fun) + x - min_key;
     }
-
-    return dp[x] = ans;
   };
 
   ull ans = fun(h, fun);
